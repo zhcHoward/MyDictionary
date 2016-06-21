@@ -13,9 +13,17 @@ html = response.text
 soup = bs4.BeautifulSoup(html, 'html5lib')
 
 word = soup.find('h1', 'keyword').text
-explains_html = soup.find_all(attrs={'class': 'base-list'})
-explains = []
+explains_html = soup.find(attrs={'class': 'base-list'})
+explains = {}
 for each_prop in explains_html.find_all(attrs={'class': 'clearfix'}):
-    explains.append({
-        each_prop.find('span', 'prop').text: each_prop.find('p').split()
+    # result = each_prop.find(attrs={'class': 'clearfix'})
+    explains.update({
+        each_prop.find('span', 'prop').text: each_prop.find('p').text.split()
     })
+
+print(word + ':')
+for prop, detail in explains.items():
+    print(prop + '\t', end='')
+    for d in detail:
+        print(d + ' ', end='')
+    print()
