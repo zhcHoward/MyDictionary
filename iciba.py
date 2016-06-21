@@ -5,6 +5,12 @@ import sys
 import requests
 import bs4
 
+
+class Iciba(object):
+    """API for www.iciba.com"""
+    _url = 'http://www.iciba.com/'
+
+
 if __name__ == '__main__':
     url = 'http://www.iciba.com/'
     word = sys.argv[1]
