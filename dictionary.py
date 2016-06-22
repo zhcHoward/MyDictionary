@@ -4,12 +4,13 @@
 import sys
 
 from Dictionary_APIs.iciba import Iciba
+from Dictionary_APIs.youdao import Youdao
 
 
 class DictionaryAPI(object):
     """docstring for DictionaryAPI"""
 
-    def __init__(self, word='', service=Iciba):
+    def __init__(self, word='', service=Youdao):
         self.service = service(word)
 
     def search(self, word):
