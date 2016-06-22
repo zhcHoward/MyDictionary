@@ -1,6 +1,8 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import sys
+
 from Dictionary_APIs.iciba import Iciba
 
 
@@ -18,6 +20,7 @@ class DictionaryAPI(object):
 
 
 if __name__ == '__main__':
-    dictionary = DictionaryAPI('place')
-    dictionary.search('work')
+    word = sys.argv[1]
+    dictionary = DictionaryAPI()
+    dictionary.search(word)
     dictionary.display()
