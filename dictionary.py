@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import json
 
 from Dictionary_APIs.iciba import Iciba
 from Dictionary_APIs.youdao import Youdao
@@ -16,8 +17,14 @@ dictionaries = {
 class DictionaryAPI(object):
     """docstring for DictionaryAPI"""
 
-    def __init__(self, word='', service=Youdao):
-        self.service = service(word)
+    def __init__(self, word='', service=Iciba):
+        with open('config.json') as file:
+            configs = json.load(file)
+        default_dictionary = configs.get('default_dictionary', None)
+        if default_dictionary:
+            self.service = dictionaries[default_dictionary](word)
+        else:
+            self.service = service(word)
 
     def search(self, word=''):
         if word:
