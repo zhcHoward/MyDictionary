@@ -3,6 +3,7 @@
 
 import sys
 import json
+from os.path import dirname, abspath, join
 
 from Dictionary_APIs.iciba import Iciba
 from Dictionary_APIs.youdao import Youdao
@@ -18,13 +19,7 @@ class DictionaryAPI(object):
     """docstring for DictionaryAPI"""
 
     def __init__(self, word='', service=Iciba):
-        with open('config.json') as file:
-            configs = json.load(file)
-        default_dictionary = configs.get('default_dictionary', None)
-        if default_dictionary:
-            self.service = dictionaries[default_dictionary](word)
-        else:
-            self.service = service(word)
+        self.service = service(word)
 
     def search(self, word=''):
         if word:
@@ -37,6 +32,14 @@ class DictionaryAPI(object):
 
 
 if __name__ == '__main__':
+    base_dir = dirname(abspath(__file__))
+    with open(join(base_dir, 'config.json')) as file:
+        configs = json.load(file)
+    default_dictionary = configs.get('default_dictionary', None)
+    service = {}
+    if default_dictionary:
+        service['service'] = dictionaries[default_dictionary]
+
     if len(sys.argv) == 3:
         kwargs = {
             'word': sys.argv[1],
@@ -46,6 +49,8 @@ if __name__ == '__main__':
         kwargs = {
             'word': sys.argv[1],
         }
+        kwargs.update(service)
+
     dictionary = DictionaryAPI(**kwargs)
     dictionary.search()
     dictionary.display()
