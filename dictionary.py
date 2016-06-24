@@ -54,3 +54,4 @@ if __name__ == '__main__':
     dictionary = DictionaryAPI(**kwargs)
     dictionary.search()
     dictionary.display()
+

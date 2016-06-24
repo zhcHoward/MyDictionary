@@ -17,7 +17,7 @@ class Iciba(DictionaryBase):
 
     def parse_content(self, content):
         soup = bs4.BeautifulSoup(content, 'html5lib')
-        properties = soup.find(class_='base-list').find_all(class_='clearfix')
+        properties = soup.find(class_='base-list').find_all(class_='clearfix')  # TODO error handling when word not found
 
         self.result = {}
         for each_prop in properties:
