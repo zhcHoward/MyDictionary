@@ -36,3 +36,4 @@ class DictionaryBase(object):
             for d in detail:
                 print(d + ' ', end='')
             print()
+
