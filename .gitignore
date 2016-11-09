@@ -85,5 +85,8 @@ ENV/
 # Spyder project settings
 .spyderproject
 
-# Rope project settings
+# Text editor related settings
 .ropeproject
+.vscode/
+.idea/
+
