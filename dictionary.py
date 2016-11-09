@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import sys
@@ -16,8 +16,6 @@ dictionaries = {
 
 
 class DictionaryAPI(object):
-    """docstring for DictionaryAPI"""
-
     def __init__(self, word='', service=Iciba):
         self.service = service(word)
 
@@ -54,3 +52,4 @@ if __name__ == '__main__':
     dictionary = DictionaryAPI(**kwargs)
     dictionary.search()
     dictionary.display()
+
