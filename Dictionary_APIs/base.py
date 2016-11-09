@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 
@@ -36,4 +36,3 @@ class DictionaryBase(object):
             for d in detail:
                 print(d + ' ', end='')
             print()
-
