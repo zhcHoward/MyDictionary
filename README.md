@@ -18,7 +18,7 @@ So far, this program has been implemented only for English -> Chinese and it can
 
 3. Ensure you have Python3 and pip installed, then run command:
 
-   `pip install -r requirements.txt`
+   `pip3 install -r requirements.txt`
 
    To install the necessary packages.
 
