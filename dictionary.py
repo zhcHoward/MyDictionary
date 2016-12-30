@@ -7,11 +7,13 @@ from os.path import dirname, abspath, join
 
 from Dictionary_APIs.iciba import Iciba
 from Dictionary_APIs.youdao import Youdao
+from Dictionary_APIs.rrdict import RRdict
 
 
 dictionaries = {
     'iciba': Iciba,
     'youdao': Youdao,
+    'renren': RRdict,
 }
 
 
