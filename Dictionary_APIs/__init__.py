@@ -1,2 +1,1 @@
-from . import iciba, youdao
-
+__all__ = ['iciba', 'youdao', 'renren']

@@ -5,20 +5,18 @@ import sys
 import json
 from os.path import dirname, abspath, join
 
-from Dictionary_APIs.iciba import Iciba
-from Dictionary_APIs.youdao import Youdao
-from Dictionary_APIs.rrdict import RRdict
+from Dictionary_APIs import *
 
 
 dictionaries = {
-    'iciba': Iciba,
-    'youdao': Youdao,
-    'renren': RRdict,
+    'iciba': iciba.Iciba,
+    'youdao': youdao.Youdao,
+    'renren': renren.Renren,
 }
 
 
 class DictionaryAPI(object):
-    def __init__(self, word='', service=Iciba):
+    def __init__(self, word='', service=dictionaries['iciba']):
         self.service = service(word)
 
     def search(self, word=''):

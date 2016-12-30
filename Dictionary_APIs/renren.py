@@ -7,7 +7,7 @@ import bs4
 from .base import DictionaryBase
 
 
-class RRdict(DictionaryBase):
+class Renren(DictionaryBase):
     """API for 人人词典"""
     _url = 'http://www.91dict.com/'
 
