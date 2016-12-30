@@ -5,7 +5,7 @@ import sys
 import json
 from os.path import dirname, abspath, join
 
-from Dictionary_APIs import *
+from Dictionary_APIs import iciba, youdao, renren
 
 
 dictionaries = {
@@ -52,4 +52,3 @@ if __name__ == '__main__':
     dictionary = DictionaryAPI(**kwargs)
     dictionary.search()
     dictionary.display()
-
