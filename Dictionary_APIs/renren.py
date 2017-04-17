@@ -28,4 +28,4 @@ class Renren(DictionaryBase):
         for p in prop_strings:
             if p:
                 prop, explaination = p.split('.')
-                self.result[prop+'.'] = explaination.strip()
+                self.result[prop + '.'] = explaination.strip()

@@ -7,7 +7,7 @@ from .base import DictionaryBase, WordNotFound
 
 
 class Iciba(DictionaryBase):
-    """API for iciba"""
+    """API for 爱词霸"""
     _url = 'http://www.iciba.com/{}'
 
     def parse_content(self, content):

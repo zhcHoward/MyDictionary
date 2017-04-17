@@ -8,6 +8,7 @@ from .base import DictionaryBase, WordNotFound
 
 
 class Youdao(DictionaryBase):
+    """API for 有道词典"""
     _url = 'http://www.youdao.com/w/{}/'
 
     def parse_content(self, content):

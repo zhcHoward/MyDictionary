@@ -33,7 +33,7 @@ class DictionaryBase(object):
 
     @property
     def max_prop_length(self):
-        """"""
+        """by finding the max length of prop, to format the output for displaying"""
         max_len = 0
         for key in self.result.keys():
             length = len(key)
@@ -42,7 +42,11 @@ class DictionaryBase(object):
         return max_len
 
     def display(self):
-        """format self.result for displaying"""
+        """format self.result for displaying
+        example output:
+        adj.: XXX, XXXX
+          n.: XXXX
+        """
         max_len = self.max_prop_length
         for prop, detail in self.result.items():
             prop_str = '{0:>{1}s} '.format(prop, max_len)

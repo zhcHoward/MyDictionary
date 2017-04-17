@@ -33,7 +33,7 @@ if __name__ == '__main__':
     base_dir = dirname(abspath(__file__))
     with open(join(base_dir, 'config.json')) as file:
         configs = json.load(file)
-    default_dictionary = configs.get('default_dictionary', None)
+    default_dictionary = configs.get('default_dictionary')
     service = {}
     if default_dictionary:
         service['service'] = dictionaries[default_dictionary]
