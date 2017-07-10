@@ -1,8 +1,5 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
-import bs4
-import re
 
 from .base import DictionaryBase, WordNotFound
 
@@ -11,15 +8,16 @@ class Youdao(DictionaryBase):
     """API for 有道词典"""
     _url = 'http://www.youdao.com/w/{}/'
 
-    def parse_content(self, content):
-        soup = bs4.BeautifulSoup(content, 'html5lib')
-
+    def parse_explanation(self):
         try:
-            translation_list = soup.find(class_='trans-container').find_all('li')
+            translation_list = self.soup.find(class_='trans-container').find_all('li')
         except AttributeError:
-            raise WordNotFound
+            raise WordNotFound(self.word)
 
         for trans in translation_list:
-            pattern = re.compile(r'^(\w+\.)\s(.*?)$')
-            r = pattern.match(trans.text)
-            self.result[r.group(1)] = r.group(2)
+            prop, explanation = trans.text.split(maxsplit=1)
+            self.result['explanation'][prop] = explanation
+
+    def parse_pronunciation(self):
+        spans = self.soup.find_all(class_='pronounce')
+        self.result['pronunciation'] = [' '.join(span.stripped_strings) for span in spans]

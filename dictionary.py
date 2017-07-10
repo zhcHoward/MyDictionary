@@ -5,7 +5,7 @@ import sys
 import json
 from os.path import dirname, abspath, join
 
-from Dictionary_APIs import iciba, youdao, renren
+from Dictionary_APIs import *
 
 
 dictionaries = {
