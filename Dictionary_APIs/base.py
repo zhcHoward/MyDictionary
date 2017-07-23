@@ -21,7 +21,7 @@ class DictionaryBase():
 
     def get_max_prop_length(self):
         """by finding the max length of prop, to format the output for displaying"""
-        return max([len(prop) for prop, explanation in self.result['explanation']])
+        self.max_prop_length = max([len(prop) for prop, explanation in self.result['explanation']])
 
     def get_content(self):
         """get pure html from website"""

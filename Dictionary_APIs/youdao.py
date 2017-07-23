@@ -16,15 +16,30 @@ class Youdao(DictionaryBase):
             raise WordNotFound(self.word)
 
     def parse_explanation(self):
-        try:
-            translation_list = self.soup.find(class_='trans-container').find_all('li')
-        except AttributeError:
+        trans_container = self.soup.find(class_='trans-container')
+        if not trans_container:
             raise WordNotFound(self.word)
 
-        for trans in translation_list:
-            prop, explanation = trans.text.split(maxsplit=1)
-            self.result['explanation'][prop] = explanation
+        translation_list = trans_container.find_all('li')
+        if translation_list:
+            for trans in translation_list:
+                try:
+                    prop, explanation = trans.text.split(maxsplit=1)
+                except ValueError:
+                    prop, explanation = '', trans.text
+                self.result['explanation'].append((prop, explanation))
+        else:
+            translation_list = trans_container.find_all(class_='wordGroup')
+            for trans in translation_list:
+                prop = trans.span.text
+                explanation = [''.join(t.stripped_strings) for t in trans.find_all(class_='contentTitle')]
+                self.result['explanation'].append((prop, ' '.join(explanation)))
 
     def parse_pronunciation(self):
         spans = self.soup.find_all(class_='pronounce')
-        self.result['pronunciation'] = [' '.join(span.stripped_strings) for span in spans]
+        if spans:
+            self.result['pronunciation'] = [
+                ' '.join(s.stripped_strings) for s in spans if list(s.stripped_strings)
+            ]
+        else:
+            self.result['pronunciation'] = [self.soup.find(class_='phonetic').text]
