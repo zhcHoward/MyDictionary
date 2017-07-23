@@ -5,7 +5,7 @@ import sys
 import json
 from os.path import dirname, abspath, join
 
-from Dictionary_APIs import *
+from Dictionary_APIs import iciba, youdao, renren
 
 
 dictionaries = {
@@ -19,11 +19,8 @@ class DictionaryAPI(object):
     def __init__(self, word='', service=dictionaries['iciba']):
         self.service = service(word)
 
-    def search(self, word=''):
-        if word:
-            self.service.search(word)
-        else:
-            self.service.search()
+    def search(self):
+        self.service.search()
 
     def display(self):
         self.service.display()
