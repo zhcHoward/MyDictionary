@@ -1,10 +1,10 @@
 ## My Dictionary ![Travis-CI](https://travis-ci.org/zhcHoward/MyDictionary.svg?branch=master)
 
-A small dictionanry program works in console. In order to solve the problem that the dictionary I want to use does not have a Linux version, only Windows.
+A small dictionanry program works in the console. In order to solve the problem that the dictionary I want to use does not have a Linux version, only Windows.
 
 ## Introduction
 
-So far, this program has been implemented only for English -> Chinese and it can only check English words. If you want a more powerful dictionary, you can check [this repository](https://github.com/louisun/iSearch).
+Now this program works for both English => Chinese and Chinese => English. Moreover, this program can display the pronouncation of a word if it is displayed in the website.
 
 ## How To Use
 
@@ -28,11 +28,27 @@ So far, this program has been implemented only for English -> Chinese and it can
 
 Make sure you use Python3, because this program is not tested under Python2, you may get unexpected errors with Python2.
 
-Here is an example:
+Here are some examples of how it works:
+
+**English => Chinese:**
 
 ```bash
 python3 dictionary.py dictionary
-n. 词典，字典； [自]代码字典； 
+英 [ˈdɪkʃənri], 美 [ˈdɪkʃəneri]
+n. 词典，字典；[自]代码字典；
+```
+
+```shell
+python3 dictionary.py "Erasure Code"
+纠删码
+```
+
+**Chinese => English:**
+
+```shell
+python3 dictionary.py 词典
+[cí diǎn]
+释义 dictionary；lexicon；
 ```
 
 By default, this program use `iciba` as the default dictionay, you can also use `youdao` if you prefer. Just add `youdao` to the command above:
