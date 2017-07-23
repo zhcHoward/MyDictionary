@@ -1,4 +1,4 @@
-## My Dictionary
+## My Dictionary [Travis-CI](https://travis-ci.org/zhcHoward/MyDictionary.svg?branch=master)
 
 A small dictionanry program works in console. In order to solve the problem that the dictionary I want to use does not have a Linux version, only Windows.
 
