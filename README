@@ -1,0 +1,47 @@
+## My Dictionary
+
+A small dictionary program works in the console. In order to solve the problem that the dictionary I want to use does not have a Linux version, only Windows.
+
+## Introduction
+
+For now this rust version dictionary only works for English => Chinese and only for [iciba](https://www.iciba.com).
+
+## How To Use
+
+1. Clone this repo:
+
+   ```bash
+   git clone https://github.com/zhcHoward/MyDictionary.git
+   ```
+
+2. Enter the main directory:
+
+   ````bash
+   cd MyDictionary
+   ````
+
+3. Switch to `rust` branch:
+
+   ```bash
+   git checkout rust
+   ```
+
+4. Run the program:
+
+   ```bash
+   cargo run -- <word-you-want-to-search>
+   ```
+
+Here are some examples of how it works:
+
+**English => Chinese:**
+
+```bash
+cargo run -- dictionary
+英 [ˈdɪkʃənri], 美 [ˈdɪkʃəneri]
+n. 词典，字典；[自]代码字典；
+```
+
+## How It Works
+
+This program simply send requests to the website and get the whole html content. Then it filters out the information that is needed. Last, this program formats all information and display it in the console.
