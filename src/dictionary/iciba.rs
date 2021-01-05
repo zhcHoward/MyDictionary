@@ -44,16 +44,29 @@ impl Iciba {
             .expect("Mean_part not found");
         self.explaination = meaning
             .children()
-            .map(|node| {
-                let prop = node.tag("i").find().expect("prop not found").text();
-                let meanings = node
-                    .tag("div")
-                    .find()
-                    .expect("div not found")
-                    .children()
-                    .map(|span| span.text().trim_end_matches("; ").to_string())
-                    .collect();
-                Explaination::new(prop, meanings)
+            .map(|node| match node.tag("i").find() {
+                Some(itag) => {
+                    let prop = itag.text();
+                    let meanings = node
+                        .tag("div")
+                        .find()
+                        .expect("div not found")
+                        .children()
+                        .map(|span| span.text().trim_end_matches("; ").to_string())
+                        .collect();
+                    Explaination::new(prop, meanings)
+                }
+                None => {
+                    let prop = node.tag("span").find().expect("span not found").text();
+                    let meanings = node
+                        .tag("div")
+                        .find()
+                        .expect("div not found")
+                        .children()
+                        .map(|span| span.text().trim_end_matches("; ").to_string())
+                        .collect();
+                    Explaination::new(prop, meanings)
+                }
             })
             .collect();
     }
