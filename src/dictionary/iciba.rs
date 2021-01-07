@@ -30,45 +30,52 @@ impl Iciba {
     }
 
     fn parse_pronunciation<Q: QueryBuilderExt>(&mut self, block: Q) {
-        let pblock = block
-            .class(StartsWith::new("Mean_symbols_"))
-            .find()
-            .expect("Mean_symbols not found");
-        self.pronunciation = pblock.children().map(|li| li.text()).collect();
+        self.pronunciation = match block.class(StartsWith::new("Mean_symbols_")).find() {
+            None => vec![],
+            Some(pblock) => pblock.children().map(|li| li.text()).collect(),
+        }
     }
 
     fn parse_explaination<Q: QueryBuilderExt>(&mut self, block: Q) {
-        let meaning = block
-            .class(StartsWith::new("Mean_part_"))
-            .find()
-            .expect("Mean_part not found");
-        self.explaination = meaning
-            .children()
-            .map(|node| match node.tag("i").find() {
-                Some(itag) => {
-                    let prop = itag.text();
-                    let meanings = node
-                        .tag("div")
-                        .find()
-                        .expect("div not found")
-                        .children()
-                        .map(|span| span.text().trim_end_matches("; ").to_string())
-                        .collect();
-                    Explaination::new(prop, meanings)
-                }
-                None => {
-                    let prop = node.tag("span").find().expect("span not found").text();
-                    let meanings = node
-                        .tag("div")
-                        .find()
-                        .expect("div not found")
-                        .children()
-                        .map(|span| span.text().trim_end_matches("; ").to_string())
-                        .collect();
-                    Explaination::new(prop, meanings)
-                }
-            })
-            .collect();
+        match block.class(StartsWith::new("Mean_part_")).find() {
+            None => {
+                let div = block
+                    .class(StartsWith::new("Mean_trans_"))
+                    .find()
+                    .expect("Mean_trans not found");
+                let meaning = div.tag("p").find().expect("p not found").text();
+                self.explaination = vec![Explaination::new("".to_string(), vec![meaning])];
+            }
+            Some(meaning) => {
+                self.explaination = meaning
+                    .children()
+                    .map(|node| match node.tag("i").find() {
+                        Some(itag) => {
+                            let prop = itag.text();
+                            let meanings = node
+                                .tag("div")
+                                .find()
+                                .expect("div not found")
+                                .children()
+                                .map(|span| span.text().trim_end_matches("; ").to_string())
+                                .collect();
+                            Explaination::new(prop, meanings)
+                        }
+                        None => {
+                            let prop = node.tag("span").find().expect("span not found").text();
+                            let meanings = node
+                                .tag("div")
+                                .find()
+                                .expect("div not found")
+                                .children()
+                                .map(|span| span.text().trim_end_matches("; ").to_string())
+                                .collect();
+                            Explaination::new(prop, meanings)
+                        }
+                    })
+                    .collect();
+            }
+        }
     }
 }
 
