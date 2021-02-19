@@ -1,9 +1,16 @@
-use crate::dictionary::{Dictionary, Explaination};
+use crate::dictionary::{Dictionary, Explaination, Pronunciation};
+use md5;
 use reqwest::blocking::Client;
-use soup::{pattern::Pattern, NodeExt, QueryBuilderExt, Soup};
-use std::rc::Rc;
+use serde_json::Value;
+// use soup::{pattern::Pattern, QueryBuilderExt, Soup};
+use std::collections::HashMap;
+// use std::rc::Rc;
+use std::time::{SystemTime, UNIX_EPOCH};
 
-const URL: &str = "https://www.iciba.com/word";
+const URL: &str = "https://dict.iciba.com/dictionary/word/query/web";
+const CLIENT: &str = "0";
+const KEY: &str = "1000006";
+const SEED: &str = "7ece94d9f9c202b0d2ec557dg4r9bc";
 
 pub fn search(word: String) {
     let mut iciba = Iciba::new(word);
@@ -14,8 +21,8 @@ pub fn search(word: String) {
 
 struct Iciba {
     word: String,
-    html: String,
-    pronunciation: Vec<String>,
+    data: Value,
+    pronunciation: Vec<Pronunciation>,
     explaination: Vec<Explaination>,
 }
 
@@ -23,77 +30,79 @@ impl Iciba {
     fn new(word: String) -> Self {
         Iciba {
             word,
-            html: String::new(),
+            data: Value::Null,
             pronunciation: vec![],
             explaination: vec![],
         }
     }
 
-    fn parse_pronunciation<Q: QueryBuilderExt>(&mut self, block: Q) {
-        self.pronunciation = match block.class(StartsWith::new("Mean_symbols_")).find() {
-            None => vec![],
-            Some(pblock) => pblock.children().map(|li| li.text()).collect(),
+    fn parse_pronunciation(&mut self) {
+        let data = &self.data[0];
+        if let Some(symbol) = data.get("ph_am") {
+            self.pronunciation
+                .push(Pronunciation::new("美".to_string(), symbol.to_string()));
+        }
+
+        if let Some(symbol) = data.get("ph_en") {
+            self.pronunciation
+                .push(Pronunciation::new("英".to_string(), symbol.to_string()));
         }
     }
 
-    fn parse_explaination<Q: QueryBuilderExt>(&mut self, block: Q) {
-        match block.class(StartsWith::new("Mean_part_")).find() {
-            None => {
-                let div = block
-                    .class(StartsWith::new("Mean_trans_"))
-                    .find()
-                    .expect("Mean_trans not found");
-                let meaning = div.tag("p").find().expect("p not found").text();
-                self.explaination = vec![Explaination::new("".to_string(), vec![meaning])];
-            }
-            Some(meaning) => {
-                self.explaination = meaning
-                    .children()
-                    .map(|node| match node.tag("i").find() {
-                        Some(itag) => {
-                            let prop = itag.text();
-                            let meanings = node
-                                .tag("div")
-                                .find()
-                                .expect("div not found")
-                                .children()
-                                .map(|span| span.text().trim_end_matches("; ").to_string())
-                                .collect();
-                            Explaination::new(prop, meanings)
-                        }
-                        None => {
-                            let prop = node.tag("span").find().expect("span not found").text();
-                            let meanings = node
-                                .tag("div")
-                                .find()
-                                .expect("div not found")
-                                .children()
-                                .map(|span| span.text().trim_end_matches("; ").to_string())
-                                .collect();
-                            Explaination::new(prop, meanings)
-                        }
-                    })
+    fn parse_explaination(&mut self) {
+        let data = &self.data[0]["parts"];
+        self.explaination = data
+            .as_array()
+            .expect("explaination not found!")
+            .iter()
+            .map(|part| {
+                let prop = part["part"].to_string();
+                let meaning = part["means"]
+                    .as_array()
+                    .expect("means not found!")
+                    .iter()
+                    .map(|mean| mean.to_string())
                     .collect();
-            }
-        }
+                Explaination::new(prop, meaning)
+            })
+            .collect();
     }
 }
 
 impl Dictionary for Iciba {
     fn search(&mut self) {
+        // generate query
+        let timestamp = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_millis()
+            .to_string();
+        let plain = format!(
+            "{}{}{}{}{}{}",
+            &URL[22..], // get only "path" part, not the full url
+            CLIENT,
+            KEY,
+            &timestamp,
+            &self.word,
+            SEED
+        );
+        let md5sum = format!("{:x}", md5::compute(&plain));
+        let mut query = HashMap::new();
+        query.insert("client", CLIENT);
+        query.insert("key", KEY);
+        query.insert("word", &self.word);
+        query.insert("timestamp", &timestamp);
+        query.insert("signature", &md5sum);
+
         let client = Client::new();
-        let req = client.get(URL).query(&[("w", &self.word)]);
-        self.html = req.send().unwrap().text().unwrap();
+        let req = client.get(URL).query(&query);
+        let body: Value = req.send().unwrap().json().unwrap();
+        self.data = body["message"]["baesInfo"]["symbols"].to_owned();
     }
 
     fn parse(&mut self) {
-        let soup = Soup::new(&self.html);
-        let mean_block = soup
-            .class(StartsWith::new("Mean_mean_"))
-            .find()
-            .expect("Mean_mean not found");
-        self.parse_explaination(Rc::clone(&mean_block));
-        self.parse_pronunciation(mean_block);
+        self.parse_explaination();
+        self.parse_pronunciation();
     }
 
     fn display(&self) {
@@ -103,26 +112,18 @@ impl Dictionary for Iciba {
             .map(|exp| exp.prop.len())
             .max()
             .unwrap();
-        println!("{}\n{}", self.word, self.pronunciation.join(" "));
+        println!(
+            "{}\n{}",
+            self.word,
+            self.pronunciation
+                .iter()
+                .map(|pron| pron.to_string())
+                .collect::<Vec<String>>()
+                .join(" ")
+        );
         for explaination in &self.explaination {
             println!("{}", explaination.to_string(offest as usize));
         }
-    }
-}
-
-struct StartsWith<'a> {
-    prefix: &'a str,
-}
-
-impl<'a> StartsWith<'a> {
-    fn new(prefix: &'a str) -> Self {
-        Self { prefix }
-    }
-}
-
-impl Pattern for StartsWith<'_> {
-    fn matches(&self, haystack: &str) -> bool {
-        haystack.starts_with(self.prefix)
     }
 }
 

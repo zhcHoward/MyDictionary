@@ -1,4 +1,5 @@
 pub mod iciba;
+use std::fmt;
 
 pub trait Dictionary {
     fn search(&mut self);
@@ -23,5 +24,26 @@ impl Explaination {
             &self.prop,
             &self.explaination.join("; ")
         )
+    }
+}
+
+struct Pronunciation {
+    location: String,
+    symbol: String,
+}
+
+impl Pronunciation {
+    fn new(location: String, symbol: String) -> Self {
+        Self { location, symbol }
+    }
+
+    fn to_string(&self) -> String {
+        format!("{} [{}]", self.location, self.symbol)
+    }
+}
+
+impl fmt::Display for Pronunciation {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{} {}", self.location, self.symbol)
     }
 }
