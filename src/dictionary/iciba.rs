@@ -56,12 +56,12 @@ impl Iciba {
             .expect("explaination not found!")
             .iter()
             .map(|part| {
-                let prop = part["part"].to_string();
+                let prop = part["part"].as_str().unwrap().to_owned();
                 let meaning = part["means"]
                     .as_array()
                     .expect("means not found!")
                     .iter()
-                    .map(|mean| mean.to_string())
+                    .map(|mean| mean.as_str().unwrap().to_owned())
                     .collect();
                 Explaination::new(prop, meaning)
             })

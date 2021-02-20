@@ -7,6 +7,7 @@ pub trait Dictionary {
     fn display(&self);
 }
 
+#[derive(Debug)]
 struct Explaination {
     prop: String,
     explaination: Vec<String>,
@@ -27,6 +28,7 @@ impl Explaination {
     }
 }
 
+#[derive(Debug)]
 struct Pronunciation {
     location: String,
     symbol: String,
@@ -38,12 +40,12 @@ impl Pronunciation {
     }
 
     fn to_string(&self) -> String {
-        format!("{} [{}]", self.location, self.symbol)
+        format!("{}[{}]", self.location, self.symbol)
     }
 }
 
 impl fmt::Display for Pronunciation {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{} {}", self.location, self.symbol)
+        write!(f, "{}[{}]", self.location, self.symbol)
     }
 }
